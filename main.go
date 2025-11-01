@@ -5,6 +5,7 @@ import (
 	"log"
 	"todo/db"
 	"todo/handlers"
+	"todo/middlewares"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -35,14 +36,14 @@ func main() {
 
 	route.Post("/Register", handlers.RegisterHandler)
 	route.Post("/login", handlers.LoginHandler)
-	// auth := route.Group("/auth")
-	// auth.Use(Authmiddle())
-	// {
-	// 	auth.Get("/todo",GetAlltodo)
-	// 	auth.Post("/todo",AddTodo)
-	// 	auth.Patch("/todo/:id",PathTodo)
-	// 	auth.Delete("/todo/:id",DeleteTodo)
-	// }
+	auth := route.Group("/auth")
+	auth.Use(middlewares.Authmiddle())
+	{
+		auth.Get("/todo", handlers.GetAlltodo)
+		auth.Post("/todo", handlers.AddTodo)
+		// 	auth.Patch("/todo/:id",PathTodo)
+		// 	auth.Delete("/todo/:id",DeleteTodo)
+	}
 
 	log.Fatal(route.Listen(":8080"))
 }

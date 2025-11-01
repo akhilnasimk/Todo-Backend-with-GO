@@ -29,7 +29,7 @@ func GenarateJwt(U_id string) (string, error) {
 
 	jwtSecret := os.Getenv("JWT_SECRET")
 	
-	fmt.Println(jwtSecret)
+	// fmt.Println(jwtSecret)
 
 	if jwtSecret == "" {
 		return "", fmt.Errorf("forgot to put the jwt key on env ")

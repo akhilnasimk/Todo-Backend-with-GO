@@ -1,6 +1,9 @@
 package db
 
 import (
+	"fmt"
+	model "todo/models"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -13,6 +16,12 @@ func Init(conf string) error {
 	if err != nil {
 		return err
 	}
+	errr := DB.AutoMigrate(&model.Todo{})
+	if errr != nil {
+		fmt.Println("migration failed ", errr)
+		return errr
+	}
+	fmt.Println("migration completed and Todo is ready ")
 	return nil
-	
+
 }
