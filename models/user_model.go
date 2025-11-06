@@ -5,4 +5,5 @@ type Users struct {
 	Name     string `gorm:"name" json:"name"`
 	Email    string `gorm:"column:email" json:"email"`
 	Password string `gorm:"password" json:"password"`
+	Age      int    `gorm:"default:20"`
 }

@@ -8,6 +8,7 @@ import (
 	"todo/middlewares"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/joho/godotenv"
@@ -30,7 +31,12 @@ func main() {
 
 	// fiber router setting
 	route := fiber.New()
-
+	route.Use(cors.New(cors.Config{
+		AllowOrigins:     "http://localhost:5173", 
+		AllowCredentials: true,                    
+		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+	}))
 	route.Use(logger.New())
 	route.Use(recover.New())
 
@@ -41,8 +47,8 @@ func main() {
 	{
 		auth.Get("/todo", handlers.GetAlltodo)
 		auth.Post("/todo", handlers.AddTodo)
-		// 	auth.Patch("/todo/:id",PathTodo)
-		// 	auth.Delete("/todo/:id",DeleteTodo)
+		// auth.Patch("/todo/:id",PathTodo)
+		auth.Delete("/todo/:id", handlers.DeleteTodo)
 	}
 
 	log.Fatal(route.Listen(":8080"))
