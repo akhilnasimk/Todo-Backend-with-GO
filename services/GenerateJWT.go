@@ -14,8 +14,8 @@ type UserClaims struct {
 }
 
 func GenarateJwt(U_id string) (string, error) {
-	expirationTime := time.Now().Add(24 * time.Hour)
-
+	expirationTime := time.Now().Add(1 * time.Minute)
+	
 	claims := &UserClaims{
 		UserID: U_id,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -28,7 +28,7 @@ func GenarateJwt(U_id string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	jwtSecret := os.Getenv("JWT_SECRET")
-	
+
 	// fmt.Println(jwtSecret)
 
 	if jwtSecret == "" {

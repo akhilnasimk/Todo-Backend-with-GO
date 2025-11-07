@@ -32,8 +32,8 @@ func main() {
 	// fiber router setting
 	route := fiber.New()
 	route.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:5173", 
-		AllowCredentials: true,                    
+		AllowOrigins:     "http://localhost:5173",
+		AllowCredentials: true,
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 	}))
@@ -42,6 +42,7 @@ func main() {
 
 	route.Post("/Register", handlers.RegisterHandler)
 	route.Post("/login", handlers.LoginHandler)
+	route.Post("/refresh",handlers.RefreshHandler)
 	auth := route.Group("/auth")
 	auth.Use(middlewares.Authmiddle())
 	{
@@ -49,6 +50,7 @@ func main() {
 		auth.Post("/todo", handlers.AddTodo)
 		// auth.Patch("/todo/:id",PathTodo)
 		auth.Delete("/todo/:id", handlers.DeleteTodo)
+		auth.Post("/logout", handlers.LogOut)
 	}
 
 	log.Fatal(route.Listen(":8080"))

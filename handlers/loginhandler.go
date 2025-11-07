@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"time"
+	"todo/db"
 	model "todo/models"
 	"todo/services"
 
@@ -42,7 +43,16 @@ func LoginHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	cookie := fiber.Cookie{
+	//getting refresh tocken
+	referStruct, err := services.GenerateRefreshToken()
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Failed to gnerate refresh tocken ": err,
+		})
+	}
+
+	//setting access tocken
+	accessCookie := fiber.Cookie{
 		Name:     "access_token",
 		Value:    tokenString,
 		Expires:  time.Now().Add(24 * time.Hour),
@@ -51,9 +61,32 @@ func LoginHandler(c *fiber.Ctx) error {
 		SameSite: "Lax",
 		Path:     "/",
 	}
-	c.Cookie(&cookie)
+	c.Cookie(&accessCookie)
+
+	//setting the reference cookie
+	RefreshCookie := fiber.Cookie{
+		Name:     "refresh_token",
+		Value:    referStruct.Token,
+		Expires:  referStruct.ExpiresAt,
+		HTTPOnly: true,
+		Secure:   true,
+		SameSite: "Lax",
+		Path:     "/",
+	}
+	c.Cookie(&RefreshCookie) //setted here
+	//hashing password
+	hashedtoocken := services.GenerateHash(referStruct.Token)
+	errr := services.SaveOrUpdateRefreshToken(db.DB, u.User_id, hashedtoocken, referStruct.ExpiresAt) //running the db logic
+
+	if errr != nil { //if something goes wrong 
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+			"error":    "failed to insert the refresh tocken into Db ",
+			"response": errr,
+		})
+	}
 
 	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-		"User has found": u,
+		"access tocken":   tokenString,
+		"refresh tocken ": referStruct.Token,
 	})
 }

@@ -16,12 +16,7 @@ func Init(conf string) error {
 	if err != nil {
 		return err
 	}
-	errr := DB.AutoMigrate(&model.Todo{})
-	if errr != nil {
-		fmt.Println("migration failed ", errr)
-		return errr
-	}
-	MER := DB.AutoMigrate(&model.Users{}, &model.Todo{})
+	MER := DB.AutoMigrate(&model.Users{}, &model.Todo{}, &model.RefreshToken{})
 	if MER != nil {
 		return MER
 	}

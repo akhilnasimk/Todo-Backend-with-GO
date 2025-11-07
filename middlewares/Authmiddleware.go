@@ -14,7 +14,7 @@ func Authmiddle() fiber.Handler {
 		fmt.Println(tokenString)
 		if tokenString == "" {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"message": "user not logged int no jwt ",
+				"message": "user not logged in no jwt ",
 			})
 		}
 
@@ -27,7 +27,8 @@ func Authmiddle() fiber.Handler {
 		})
 
 		if err != nil || !token.Valid {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			fmt.Println("❌ Token validation failed:", err)
+			return c.Status(401).JSON(fiber.Map{
 				"error": "invalid or expired token",
 			})
 		}
